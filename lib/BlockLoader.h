@@ -1,6 +1,6 @@
 
-#ifndef KUN__BLOCKLOADER_H_INCLUDE
-#define KUN__BLOCKLOADER_H_INCLUDE
+#ifndef KVS__BLOCKLOADER_H_INCLUDE
+#define KVS__BLOCKLOADER_H_INCLUDE
 
 #include <kvs/StructuredVolumeObject>
 #include <kvs/UnstructuredVolumeObject>
@@ -8,9 +8,7 @@
 #include <kvs/ClassName>
 #include <kvs/Module>
 
-
-kvs::FilterBase.( ())
-namespace kun
+namespace kvs
 {
 
 class BlockLoader : public kvs::FilterBase, public kvs::UnstructuredVolumeObject
@@ -39,6 +37,6 @@ public:
     kvs::ObjectBase* exec( const kvs::ObjectBase* object );
 };
 
-} // end of namespace kun
+} // end of namespace kvs
 
 #endif // KVS__CUBE_TO_TETRAHEDRA_H_INCLUDE

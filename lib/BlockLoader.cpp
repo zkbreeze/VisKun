@@ -1,6 +1,6 @@
 #include "BlockLoader.h"
 
-namespace kun
+namespace kvs
 {
 
     BlockLoader::BlockLoader( std::string filename )
@@ -30,7 +30,7 @@ namespace kun
     this->exec( object );
 }
 
-kun::ObjectBase* BlockLoader::exec( const kvs::ObjectBase* object )
+kvs::ObjectBase* BlockLoader::exec( const kvs::ObjectBase* object )
 {
     
 //    std::cout << volume->values().typeInfo()->typeName() <<std::endl;
@@ -495,4 +495,4 @@ kun::ObjectBase* BlockLoader::exec( const kvs::ObjectBase* object )
     return this;
 }
 
-} // end of namespace kun
+} // end of namespace kvs
