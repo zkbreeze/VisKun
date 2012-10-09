@@ -40,7 +40,7 @@ int main( int argc, char** argv )
     size_t ny = ori_volume->resolution().y();
     size_t nz = ori_volume->resolution().z();
     
-    kvs::UnstructuredVolumeObject* eva_volume = new kvs::BlockLoader( argv[2] );
+    kvs::UnstructuredVolumeObject* eva_volume = new kun::BlockLoader( argv[2] );
     float max_value = (float)ori_volume->maxValue();
     float min_value = (float)ori_volume->minValue();
     std::cout << "max valume of the compressed volume:" << max_value << std::endl;

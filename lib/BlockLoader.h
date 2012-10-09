@@ -8,7 +8,7 @@
 #include <kvs/ClassName>
 #include <kvs/Module>
 
-namespace kvs
+namespace kun
 {
 
 class BlockLoader : public kvs::FilterBase, public kvs::UnstructuredVolumeObject

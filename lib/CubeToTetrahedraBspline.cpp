@@ -1,6 +1,6 @@
 #include "CubeToTetrahedraBspline.h"
 
-namespace kvs
+namespace kun
 {
 
 CubeToTetrahedraBspline::CubeToTetrahedraBspline( const kvs::StructuredVolumeObject* volume, size_t i )

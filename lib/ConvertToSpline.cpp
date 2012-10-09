@@ -316,7 +316,7 @@ void ComputeTensorForGivenPoint(int nx, int ny, int nz, int u, int v, int w, flo
 {
 	float f1[4], f2[4], f3[4];
 	float f1x[4], f2x[4], f3x[4];
-	float f1xx[4], f2xx[4], f3xx[4];
+//	float f1xx[4], f2xx[4], f3xx[4];
 	int i, j, k, l;
 	float x, y, z;
 	float dx = dxyz[2];

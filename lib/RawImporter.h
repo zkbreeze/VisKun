@@ -17,7 +17,7 @@
 #include <kvs/Vector3>
 #include <kvs/AnyValueArray>
 
-namespace kvs
+namespace kun
 {
 
     class RawImporter : public kvs::StructuredVolumeObject

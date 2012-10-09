@@ -9,7 +9,7 @@
 #include <kvs/Module>
 #include"ConvertToSpline.h"
 
-namespace kvs
+namespace kun
 {
 
 class CubeToTetrahedraLinear : public kvs::FilterBase, public kvs::UnstructuredVolumeObject

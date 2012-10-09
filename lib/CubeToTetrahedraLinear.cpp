@@ -1,6 +1,6 @@
 #include "CubeToTetrahedraLinear.h"
 
-namespace kvs
+namespace kun
 {
 
 CubeToTetrahedraLinear::CubeToTetrahedraLinear( const kvs::StructuredVolumeObject* volume, size_t i )
@@ -43,7 +43,7 @@ kvs::ObjectBase* CubeToTetrahedraLinear::exec( const kvs::ObjectBase* object )
     float* ori_values = ( float* )volume->values().pointer();
     const size_t nx = volume->resolution().x();
     const size_t ny = volume->resolution().y();
-    const size_t nz = volume->resolution().z();
+//    const size_t nz = volume->resolution().z();
     
     //Calculate the value and coord of every vertex
     kvs::AnyValueArray values;

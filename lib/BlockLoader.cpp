@@ -1,6 +1,6 @@
 #include "BlockLoader.h"
 
-namespace kvs
+namespace kun
 {
 
     BlockLoader::BlockLoader( std::string filename )

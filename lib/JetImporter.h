@@ -20,7 +20,7 @@
 
 //test
 
-namespace kvs
+namespace kun
 {
 
     class JetImporter : public kvs::StructuredVolumeObject

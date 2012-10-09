@@ -14,7 +14,7 @@
 #include <cstdlib>
 #include <cstring>
 
-namespace kvs
+namespace kun
 {
 
 JetImporter::JetImporter( void )
