@@ -166,7 +166,7 @@ class KeyPressEvent : public kvs::KeyPressEventListener
             }
             case kvs::Key::v:
             {
-                std::cout << screen()->camera()->xForm().toMatrix();
+                std::cout << screen()->camera()->xform();
                 
             }
         }
