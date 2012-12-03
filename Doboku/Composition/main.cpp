@@ -60,6 +60,11 @@ class KeyPressEvent : public kvs::KeyPressEventListener
                 static_cast<kvs::glut::Screen*>( screen() )->controlTarget() = kvs::Scene::TargetCamera;
                 break;
             }
+            case kvs::Key::s:
+            {
+                kvs::ColorImage image = static_cast<kvs::glut::Screen*>( screen() )->camera()->snapshot();
+                break;
+            }
         }
     }
 };

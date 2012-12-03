@@ -127,7 +127,6 @@ kvs::StructuredVolumeObject* ValueProcessing( kvs::StructuredVolumeObject* objec
             pvalues[i] = red;
         else
             pvalues[i] = 0;
-
     }
         
     kvs::Vector3ui resolution( nx_ori, ny_ori, nz_ori );
