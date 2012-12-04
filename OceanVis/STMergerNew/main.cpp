@@ -30,8 +30,6 @@
 #include <kvs/StructuredVolumeExporter>
 
 using namespace std;
-size_t grid_x = 20;
-size_t grid_y = 20;
 kvs::TransferFunction tf;
 
 class Argument : public kvs::CommandLine
@@ -42,6 +40,7 @@ public:
     std::string filename_t;
     kvs::TransferFunction tfunc;
     std::string outname;
+    size_t grid_number;
     
     Argument( int argc, char** argv ) : CommandLine ( argc, argv )
     {
@@ -50,6 +49,7 @@ public:
         addOption( "t", "filename of t", 1, true );
         addOption( "tfunc", "tfunc", 1, false );
         addOption( "outname", "output filename", 1, false );
+        addOption( "g", "grid number", 1, false );
     }
     
     void exec()
@@ -60,6 +60,7 @@ public:
         if( this->hasOption( "t" ) ) filename_t = this->optionValue<std::string>( "t" );
         if( this->hasOption( "tfunc" ) ) tfunc = kvs::TransferFunction( this->optionValue<std::string>( "tfunc" ) );
         if( this->hasOption( "outname" ) ) outname = this->optionValue<std::string>( "outname" );
+        if( this->hasOption( "g" ) ) grid_number = this->optionValue<size_t>( "g" );
     }
 };
 
@@ -83,7 +84,7 @@ public:
     
 };
 
-kvs::StructuredVolumeObject* ValueProcessing( kvs::StructuredVolumeObject* object_x, kvs::StructuredVolumeObject* object_y )
+kvs::StructuredVolumeObject* ValueProcessing( kvs::StructuredVolumeObject* object_x, kvs::StructuredVolumeObject* object_y, size_t grid_x, size_t grid_y )
 {
     size_t nx_ori = object_x->resolution().x();
     size_t ny_ori = object_x->resolution().y();
@@ -200,7 +201,7 @@ int main( int argc, char** argv )
     //Load Volume Data
     kvs::StructuredVolumeObject* volume_s = new kvs::StructuredVolumeImporter( param.filename_s );
     kvs::StructuredVolumeObject* volume_t = new kvs::StructuredVolumeImporter( param.filename_t );
-    kvs::StructuredVolumeObject* volume = ValueProcessing( volume_s, volume_t );
+    kvs::StructuredVolumeObject* volume = ValueProcessing( volume_s, volume_t, param.grid_number, param.grid_number );
     std::cout << *volume << std::endl;
     if( param.hasOption( "outname" ) )
         WriteKVSML( volume, param.outname );
