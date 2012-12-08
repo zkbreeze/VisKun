@@ -135,18 +135,41 @@ kvs::StructuredVolumeObject* ValueProcessing( kvs::StructuredVolumeObject* objec
     cmap.addPoint( 0.5, kvs::RGBColor( 0, 255, 255 ) );
     cmap.addPoint( ( 32 - object_x->minValue() ) * scale_x * grid_y, kvs::RGBColor( 0, 255, 255 ) );
     
-    // green
-    cmap.addPoint( ( 32 - object_x->minValue() ) * scale_x * grid_y + 0.5, kvs::RGBColor( 0, 255, 0 ) );
-    cmap.addPoint( ( 33.3 - object_x->minValue() ) * scale_x * grid_y, kvs::RGBColor( 0, 255, 0 ) );
+    // blue
+    cmap.addPoint( ( 32 - object_x->minValue() ) * scale_x * grid_y + 0.5, kvs::RGBColor( 0, 0, 255 ) );
+    cmap.addPoint( ( 33.3 - object_x->minValue() ) * scale_x * grid_y, kvs::RGBColor( 0, 0, 255 ) );
     
     // yellow
     cmap.addPoint( ( 33.3 - object_x->minValue() ) * scale_x * grid_y + 0.5, kvs::RGBColor( 255, 255, 0 ) );
     cmap.addPoint( ( 33.6 - object_x->minValue() ) * scale_x * grid_y, kvs::RGBColor( 255, 255, 0 ) );
     
-    // red
-    cmap.addPoint( ( 33.6 - object_x->minValue() ) * scale_x * grid_y + 0.5, kvs::RGBColor( 255, 0, 0 ) );
-    cmap.addPoint( grid_number - 1, kvs::RGBColor( 255, 0, 0 ) );
-    cmap.create();
+    //TW
+    for ( size_t i = 0; i < ( 34.5 - 33.6 ) * scale_x; i++ )
+    {
+        // yellow
+        cmap.addPoint( (( 33.6 - object_x->minValue() ) * scale_x + i ) * grid_y + 0.5, kvs::RGBColor( 255, 255, 0 ) );
+        cmap.addPoint( (( 33.6 - object_x->minValue() ) * scale_x + i ) * grid_y + (3 - object_y->minValue()) * scale_y, kvs::RGBColor( 255, 255, 0 ) );
+        // TW green
+        cmap.addPoint( (( 33.6 - object_x->minValue() ) * scale_x + i ) * grid_y + (3 - object_y->minValue()) * scale_y + 0.5, kvs::RGBColor( 0, 255, 0 ) );
+        cmap.addPoint( (( 33.6 - object_x->minValue() ) * scale_x + i ) * grid_y + object_y->maxValue() * scale_y, kvs::RGBColor( 0, 255, 0 ) );
+    }
+    
+    // KW red
+    for ( size_t i = 0; i < ( object_x->maxValue() - 34.5 ) * scale_x; i++ )
+    {
+        // yellow
+        cmap.addPoint( (( 34.5 - object_x->minValue() ) * scale_x + i ) * grid_y + 0.5, kvs::RGBColor( 255, 255, 0 ) );
+        cmap.addPoint( (( 34.5 - object_x->minValue() ) * scale_x + i ) * grid_y + (3 - object_y->minValue()) * scale_y, kvs::RGBColor( 255, 255, 0 ) );
+        // KW red
+        cmap.addPoint( (( 34.5 - object_x->minValue() ) * scale_x + i ) * grid_y + (3 - object_y->minValue()) * scale_y + 0.5, kvs::RGBColor( 255, 0, 0 ) );
+        cmap.addPoint( (( 33.6 - object_x->minValue() ) * scale_x + i ) * grid_y + object_y->maxValue() * scale_y, kvs::RGBColor( 255, 0, 0 ) );
+    }
+//
+//    
+//    // red
+//    cmap.addPoint( ( 33.6 - object_x->minValue() ) * scale_x * grid_y + 0.5, kvs::RGBColor( 255, 0, 0 ) );
+//    cmap.addPoint( grid_number - 1, kvs::RGBColor( 255, 0, 0 ) );
+//    cmap.create();
     
     std::cout << "succeed in creating cmap" << std::endl;
     
