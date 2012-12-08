@@ -233,11 +233,12 @@ int main( int argc, char** argv )
     = new kvs::glew::RayCastingRenderer();
     renderer->disableShading();
     
-    TransferFunctionEditor editor( &screen );
-    editor.setTransferFunction( tf );
-    renderer->setTransferFunction( editor.transferFunction() );
-    editor.setVolumeObject( volume );
-    editor.show();
+//    TransferFunctionEditor editor( &screen );
+//    editor.setTransferFunction( tf );
+//    renderer->setTransferFunction( editor.transferFunction() );
+//    editor.setVolumeObject( volume );
+//    editor.show();
+    renderer->setTransferFunction( tf );
     
     screen.registerObject( volume, renderer );
     
