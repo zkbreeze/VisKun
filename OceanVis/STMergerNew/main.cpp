@@ -162,7 +162,7 @@ kvs::StructuredVolumeObject* ValueProcessing( kvs::StructuredVolumeObject* objec
         cmap.addPoint( (( 34.5 - object_x->minValue() ) * scale_x + i ) * grid_y + (3 - object_y->minValue()) * scale_y, kvs::RGBColor( 255, 255, 0 ) );
         // KW red
         cmap.addPoint( (( 34.5 - object_x->minValue() ) * scale_x + i ) * grid_y + (3 - object_y->minValue()) * scale_y + 0.5, kvs::RGBColor( 255, 0, 0 ) );
-        cmap.addPoint( (( 33.6 - object_x->minValue() ) * scale_x + i ) * grid_y + object_y->maxValue() * scale_y, kvs::RGBColor( 255, 0, 0 ) );
+        cmap.addPoint( (( 34.5 - object_x->minValue() ) * scale_x + i ) * grid_y + object_y->maxValue() * scale_y, kvs::RGBColor( 255, 0, 0 ) );
     }
 //
 //    
