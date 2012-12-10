@@ -124,9 +124,9 @@ kvs::StructuredVolumeObject* ValueProcessing(
     float scale_y = (float)grid_y / ( max - min );
     
     float x1 = 32;
-    float x2 = 33.3;
-    float x3 = 33.6;
-    float x4 = 34.5;
+    float x2 = 33;
+    float x3 = 34;
+    float x4 = 34.48;
         
     // value processing
     kvs::AnyValueArray values;
@@ -158,8 +158,8 @@ kvs::StructuredVolumeObject* ValueProcessing(
     cmap.addPoint( 0.25, kvs::RGBColor( 0, 0, 255 ) );
     
     // water
-    cmap.addPoint( 0.5, kvs::RGBColor( 0, 255, 255 ) );
-    cmap.addPoint( grid_y - 1, kvs::RGBColor( 0, 255, 255 ) );
+    cmap.addPoint( 0.5, kvs::RGBColor( 0, 0, 255 ) );
+    cmap.addPoint( grid_y - 1, kvs::RGBColor( 0, 0, 255 ) );
     
     // blue
     cmap.addPoint( grid_y - 0.5, kvs::RGBColor( 0, 0, 255 ) );
@@ -184,13 +184,24 @@ kvs::StructuredVolumeObject* ValueProcessing(
     omap.setRange( 0, grid_number );
     omap.addPoint( 0, 0 );
     omap.addPoint( 0.1, 0);
-    float omap_scale = 4;
-    for ( size_t i = 1; i < grid_number - 1; i++ )
+    float omap_scale = 0.3;
+//    for ( size_t i = 1; i < grid_number - 1; i++ )
+//    {
+//        omap.addPoint( i + 0.25, (float)( i % grid_y ) / ( grid_y / omap_scale ) );
+//        omap.addPoint( i + 0.75, (float)(( i + 1 ) % grid_y) / ( grid_y / omap_scale ) );
+//    }
+    float threshold = 5.0 / max;
+    for ( size_t i = 0; i < 5; i ++ )
     {
-        omap.addPoint( i + 0.25, (float)( i % grid_y ) / ( grid_y * omap_scale ) );
-        omap.addPoint( i + 0.75, (float)(( i + 1 ) % grid_y) / ( grid_y * omap_scale ) );
+        omap.addPoint( i * grid_y, 0 );
+        omap.addPoint( i * grid_y + 0.5, 0.001 );
+        omap.addPoint( ( i + threshold ) * grid_y, 0.001 );
+        omap.addPoint( i * (grid_y - 1), omap_scale );
     }
-    omap.addPoint( grid_number, 1 );
+    omap.addPoint( grid_y, 0.1);
+    omap.addPoint( ( 1 + threshold ) * grid_y, 0.1 );
+
+    omap.addPoint( grid_number, omap_scale );
     omap.create();
     std::cout << "succeed in creating omap" << std::endl;
     
@@ -244,12 +255,12 @@ int main( int argc, char** argv )
     = new kvs::glew::RayCastingRenderer();
     renderer->disableShading();
     
-//    TransferFunctionEditor editor( &screen );
-//    editor.setTransferFunction( tf );
-//    renderer->setTransferFunction( editor.transferFunction() );
-//    editor.setVolumeObject( volume );
-//    editor.show();
-    renderer->setTransferFunction( tf );
+    TransferFunctionEditor editor( &screen );
+    editor.setTransferFunction( tf );
+    renderer->setTransferFunction( editor.transferFunction() );
+    editor.setVolumeObject( volume );
+    editor.show();
+//    renderer->setTransferFunction( tf );
     
     screen.registerObject( volume, renderer );
 

@@ -23,12 +23,12 @@ int main( int argc, char** argv )
     kvs::StructuredVolumeObject* volume2 = new kvs::StructuredVolumeImporter( argv[2] );
 
     kvs::TableObject* object = new kvs::TableObject();
-    object->addColumn( volume1->values(), "S" );
-    object->addColumn( volume2->values(), "T" );
+    object->addColumn( volume1->values(), "X" );
+    object->addColumn( volume2->values(), "Y" );
     object->setMinValue( 0, 31 );
-    object->setMinValue( 1, 0 );
+    object->setMinValue( 1, volume2->minValue() );
     object->setMaxValue( 0, 35 );
-    object->setMaxValue( 1, 25 );
+    object->setMaxValue( 1, volume2->maxValue() );
 
     delete volume1;
     delete volume2;

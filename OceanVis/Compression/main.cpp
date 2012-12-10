@@ -10,6 +10,7 @@
 #include <kvs/CellByCellMetropolisSampling>
 #include <kvs/glew/ParticleVolumeRenderer>
 #include <kvs/glew/RayCastingRenderer>
+#include <kvs/glew/StochasticTetrahedraRenderer>
 #include <kvs/KVSMLObjectStructuredVolume>
 #include <kvs/StructuredVolumeExporter>
 #include <kvs/KVSMLObjectUnstructuredVolume>
@@ -221,6 +222,18 @@ int main( int argc, char** argv )
                 WriteKVSMLPoint( object, param.outPoint );
             std::cout << "Finish writting the point object" << std::endl;
             
+        }
+        if( param.hasOption( "SPT" ) )
+        {   
+            kvs::glew::StochasticTetrahedraRenderer* renderer_SPT = new kvs::glew::StochasticTetrahedraRenderer();
+            renderer_SPT->setRepetitionLevel( param.rl );
+            renderer_SPT->setTransferFunction( param.tfunc );
+            renderer_SPT->enableLODControl();
+            
+            screen.registerObject( tet, renderer_SPT );
+            screen.setTitle( "SPT Renderer");
+            
+            std::cout << "SPT process has been done" << std::endl;
         }
         if( param.hasOption( "Edge" ) )
         {
