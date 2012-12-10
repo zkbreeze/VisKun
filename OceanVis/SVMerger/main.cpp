@@ -198,9 +198,9 @@ kvs::StructuredVolumeObject* ValueProcessing(
         omap.addPoint( ( i + threshold ) * grid_y, 0.001 );
         omap.addPoint( i * (grid_y - 1), omap_scale );
     }
-    omap.addPoint( grid_y, 0.1);
-    omap.addPoint( ( 1 + threshold ) * grid_y, 0.1 );
-
+    omap.removePoint( 100.5 );
+    omap.removePoint( ( 1 + threshold ) * grid_y );
+    
     omap.addPoint( grid_number, omap_scale );
     omap.create();
     std::cout << "succeed in creating omap" << std::endl;
