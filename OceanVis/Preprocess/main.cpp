@@ -37,6 +37,7 @@ public:
     
     std::string filename_s;
     std::string filename_t;
+    std::string filename;
     std::string outname;
     
     Argument( int argc, char** argv ) : CommandLine ( argc, argv )
@@ -44,6 +45,7 @@ public:
         add_help_option();
         addOption( "s", "filename of s", 1, false );
         addOption( "t", "filename of t", 1, false );
+        addOption( "f", "filename (without value processing)", 1, false );
         addOption( "outname", "filename of output", 1, false );
     }
     
@@ -52,6 +54,7 @@ public:
         if( !this->parse() ) exit( EXIT_FAILURE );
         if( this->hasOption( "s" ) ) filename_s = this->optionValue<std::string>( "s" );
         if( this->hasOption( "t" ) ) filename_t = this->optionValue<std::string>( "t" );
+        if( this->hasOption( "f" ) ) filename = this->optionValue<std::string>( "f" );        
         if( this->hasOption( "outname" ) ) outname = this->optionValue<std::string>( "outname" );
     }
 };
@@ -109,6 +112,14 @@ int main( int argc, char** argv )
         kvs::StructuredVolumeObject* peel_object = peel( volume, 3 );
         delete volume;
         object = Interpolator( peel_object, 0, 25 );
+        delete peel_object;
+    }
+    if ( param.hasOption( "f" ))
+    {
+        kvs::StructuredVolumeObject* volume = new kvs::StructuredVolumeImporter( param.filename );
+        kvs::StructuredVolumeObject* peel_object = peel( volume, 3 );
+        delete volume;
+        object = Interpolator( peel_object, peel_object->minValue(), peel_object->maxValue() );
         delete peel_object;
     }
     

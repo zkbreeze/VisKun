@@ -216,7 +216,6 @@ int main( int argc, char** argv )
 {
     kvs::glut::Application app( argc, argv );
     kvs::glut::Screen screen( &app );
-    screen.show();
 
     Argument param( argc, argv );
     param.exec();
@@ -241,6 +240,8 @@ int main( int argc, char** argv )
     renderer->setTransferFunction( tf );
     
     screen.registerObject( volume, renderer );
+    screen.show();
+
     
     return( app.run() );
 }

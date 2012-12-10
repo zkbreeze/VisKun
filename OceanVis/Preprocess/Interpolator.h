@@ -34,8 +34,6 @@ kvs::StructuredVolumeObject* Interpolator( kvs::StructuredVolumeObject* object, 
         infile >> depth[i];
         infile >> dz[i];
     }
-
-    std::cout << nz_ori << std::endl;
     
     // interpolate the value linearly
     // build the interpolator
