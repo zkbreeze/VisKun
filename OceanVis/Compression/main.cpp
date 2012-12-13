@@ -117,6 +117,12 @@ int main( int argc, char** argv )
     param.exec();
     
     kvs::TransferFunction transferfunc = param.tfunc;
+    kvs::ColorMap cmap = transferfunc.colorMap();
+    cmap.addPoint( 0, kvs::RGBColor( 255, 255, 255) );
+    kvs::OpacityMap omap = transferfunc.opacityMap();
+    omap.addPoint( 0, 0.5 );
+    transferfunc.setColorMap( cmap );
+    transferfunc.setOpacityMap( omap );
     
     // load the original volume data
     kvs::StructuredVolumeObject* volume = new kvs::StructuredVolumeImporter( param.filename );
@@ -227,7 +233,7 @@ int main( int argc, char** argv )
         {   
             kvs::glew::StochasticTetrahedraRenderer* renderer_SPT = new kvs::glew::StochasticTetrahedraRenderer();
             renderer_SPT->setRepetitionLevel( param.rl );
-            renderer_SPT->setTransferFunction( param.tfunc );
+            renderer_SPT->setTransferFunction( transferfunc );
             renderer_SPT->enableLODControl();
             
             screen.registerObject( tet, renderer_SPT );

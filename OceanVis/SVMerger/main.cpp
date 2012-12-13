@@ -38,9 +38,8 @@ class Argument : public kvs::CommandLine
 public:
     
     std::string filename_s;
-    std::string filename_u;
     std::string filename_v;
-    std::string filename_w;
+
     kvs::TransferFunction tfunc;
     std::string outname;
     size_t grid_number;
@@ -49,9 +48,7 @@ public:
     {
         add_help_option();
         addOption( "s", "filename of s", 1, true );
-        addOption( "u", "filename of u", 1, true );
-        addOption( "v", "filename of v", 1, true );
-        addOption( "w", "filename of w", 1, true );
+        addOption( "v", "filename of velocity", 1, true );
         addOption( "tfunc", "tfunc", 1, false );
         addOption( "outname", "output filename", 1, false );
         addOption( "g", "grid number", 1, false );
@@ -62,9 +59,8 @@ public:
         tfunc.create( 256 );
         if( !this->parse() ) exit( EXIT_FAILURE );
         if( this->hasOption( "s" ) ) filename_s = this->optionValue<std::string>( "s" );
-        if( this->hasOption( "u" ) ) filename_u = this->optionValue<std::string>( "u" );
         if( this->hasOption( "v" ) ) filename_v = this->optionValue<std::string>( "v" );
-        if( this->hasOption( "w" ) ) filename_w = this->optionValue<std::string>( "w" );
+
         if( this->hasOption( "tfunc" ) ) tfunc = kvs::TransferFunction( this->optionValue<std::string>( "tfunc" ) );
         if( this->hasOption( "outname" ) ) outname = this->optionValue<std::string>( "outname" );
         if( this->hasOption( "g" ) ) grid_number = this->optionValue<size_t>( "g" );
@@ -93,10 +89,8 @@ public:
 
 kvs::StructuredVolumeObject* ValueProcessing( 
                                              kvs::StructuredVolumeObject* object_x, 
-                                             kvs::StructuredVolumeObject* object_u,
-                                             kvs::StructuredVolumeObject* object_v, 
-                                             kvs::StructuredVolumeObject* object_w, 
-                                             size_t grid_y 
+                                             kvs::StructuredVolumeObject* object_y, 
+                                             size_t grid_y
                                              )
 {
     size_t nx_ori = object_x->resolution().x();
@@ -104,21 +98,14 @@ kvs::StructuredVolumeObject* ValueProcessing(
     size_t nz_ori = object_x->resolution().z();
 
     float* pvalues_x = (float*)object_x->values().pointer();
-    float* pvalues_u = (float*)object_u->values().pointer();
-    float* pvalues_v = (float*)object_v->values().pointer();
-    float* pvalues_w = (float*)object_w->values().pointer();
+    float* pvalues_y = (float*)object_y->values().pointer();
+
     unsigned int n = object_x->nnodes();
     
     // calculate the absolute value of velocity
-    float* pvalues_y = new float[n];
-    float min = FLT_MAX;
-    float max = -FLT_MAX;
-    for ( size_t i = 0; i < n; i++ )
-    {
-        pvalues_y[i] = std::sqrt( pvalues_u[i] * pvalues_u[i] + pvalues_v[i] * pvalues_v[i] + pvalues_w[i] * pvalues_w[i] );
-        if ( pvalues_y[i] > max ) max = pvalues_y[i];
-        if ( pvalues_y[i] < min ) min = pvalues_y[i];
-    }
+    float min = object_y->minValue();
+    float max = object_y->maxValue();
+
     std::cout << "min value of velocity: " << min << std::endl;
     std::cout << "max value of velocity: " << max << std::endl;
     float scale_y = (float)grid_y / ( max - min );
@@ -127,7 +114,7 @@ kvs::StructuredVolumeObject* ValueProcessing(
     float x2 = 33;
     float x3 = 34;
     float x4 = 34.48;
-        
+        1
     // value processing
     kvs::AnyValueArray values;
     float* pvalues = static_cast<float*>( values.allocate<float>( n ) );
@@ -154,16 +141,16 @@ kvs::StructuredVolumeObject* ValueProcessing(
     kvs::ColorMap cmap( grid_number );
     cmap.setRange( 0, grid_number - 1 );
 
-    cmap.addPoint( 0, kvs::RGBColor( 0, 0, 255 ) );
-    cmap.addPoint( 0.25, kvs::RGBColor( 0, 0, 255 ) );
+    cmap.addPoint( 0, kvs::RGBColor( 255, 255, 255 ) );
+    cmap.addPoint( 0.25, kvs::RGBColor( 255, 255, 255 ) );
     
     // water
     cmap.addPoint( 0.5, kvs::RGBColor( 0, 0, 255 ) );
     cmap.addPoint( grid_y - 1, kvs::RGBColor( 0, 0, 255 ) );
     
     // blue
-    cmap.addPoint( grid_y - 0.5, kvs::RGBColor( 0, 0, 255 ) );
-    cmap.addPoint( 2 * grid_y - 1, kvs::RGBColor( 0, 0, 255 ) );
+    cmap.addPoint( grid_y - 0.5, kvs::RGBColor( 0, 255, 255 ) );
+    cmap.addPoint( 2 * grid_y - 1, kvs::RGBColor( 0, 255, 255 ) );
     
     // yellow
     cmap.addPoint( 2 * grid_y - 0.5, kvs::RGBColor( 255, 255, 0 ) );
@@ -182,8 +169,7 @@ kvs::StructuredVolumeObject* ValueProcessing(
     
     kvs::OpacityMap omap( grid_number );
     omap.setRange( 0, grid_number );
-    omap.addPoint( 0, 0 );
-    omap.addPoint( 0.1, 0);
+
     float omap_scale = 0.3;
 //    for ( size_t i = 1; i < grid_number - 1; i++ )
 //    {
@@ -200,6 +186,8 @@ kvs::StructuredVolumeObject* ValueProcessing(
     }
     omap.removePoint( 100.5 );
     omap.removePoint( ( 1 + threshold ) * grid_y );
+    omap.removePoint( 0 );
+    omap.addPoint( 0, 0.9 );
     
     omap.addPoint( grid_number, omap_scale );
     omap.create();
@@ -243,10 +231,8 @@ int main( int argc, char** argv )
     
     //Load Volume Data
     kvs::StructuredVolumeObject* volume_s = new kvs::StructuredVolumeImporter( param.filename_s );
-    kvs::StructuredVolumeObject* volume_u = new kvs::StructuredVolumeImporter( param.filename_u );
     kvs::StructuredVolumeObject* volume_v = new kvs::StructuredVolumeImporter( param.filename_v );
-    kvs::StructuredVolumeObject* volume_w = new kvs::StructuredVolumeImporter( param.filename_w );
-    kvs::StructuredVolumeObject* volume = ValueProcessing( volume_s, volume_u, volume_v, volume_w, param.grid_number );
+    kvs::StructuredVolumeObject* volume = ValueProcessing( volume_s, volume_v, param.grid_number );
     std::cout << *volume << std::endl;
     if( param.hasOption( "outname" ) )
         WriteKVSML( volume, param.outname );
