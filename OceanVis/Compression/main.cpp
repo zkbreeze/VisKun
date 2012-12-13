@@ -117,16 +117,17 @@ int main( int argc, char** argv )
     param.exec();
     
     kvs::TransferFunction transferfunc = param.tfunc;
-    kvs::ColorMap cmap = transferfunc.colorMap();
-    cmap.addPoint( 0, kvs::RGBColor( 255, 255, 255) );
-    kvs::OpacityMap omap = transferfunc.opacityMap();
-    omap.addPoint( 0, 0.5 );
-    transferfunc.setColorMap( cmap );
-    transferfunc.setOpacityMap( omap );
     
     // load the original volume data
     kvs::StructuredVolumeObject* volume = new kvs::StructuredVolumeImporter( param.filename );
     transferfunc.setRange( volume->minValue(), volume->maxValue() );
+    kvs::ColorMap cmap = transferfunc.colorMap();
+    cmap.addPoint( volume->minValue(), kvs::RGBColor( 255, 255, 255) );
+    kvs::OpacityMap omap = transferfunc.opacityMap();
+    omap.addPoint( volume->minValue(), 0.5 );
+    transferfunc.setColorMap( cmap );
+    transferfunc.setOpacityMap( omap );
+
 
     std::string volumeName = param.outFilename;
         
