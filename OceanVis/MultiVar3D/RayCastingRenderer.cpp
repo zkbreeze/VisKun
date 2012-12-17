@@ -424,7 +424,7 @@ void RayCastingRenderer::create_image(
             m_ray_caster.setUniformValuei( "volume.data", 1 );
             m_ray_caster.setUniformValuei( "exit_points", 2 );
             m_ray_caster.setUniformValuei( "entry_points", 3 );
-            m_ray_caster.setUniformValuei( "transfer_function2d", 4 );
+            m_ray_caster.setUniformValuei( "transfer_function3d", 4 );
             m_ray_caster.setUniformValuei( "jittering_texture", 5 );
             m_ray_caster.setUniformValuei( "depth_texture", 6 );
             m_ray_caster.setUniformValuei( "color_texture", 7 );
