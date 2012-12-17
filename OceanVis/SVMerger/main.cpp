@@ -114,7 +114,7 @@ kvs::StructuredVolumeObject* ValueProcessing(
     float x2 = 33;
     float x3 = 34;
     float x4 = 34.48;
-        1
+
     // value processing
     kvs::AnyValueArray values;
     float* pvalues = static_cast<float*>( values.allocate<float>( n ) );
