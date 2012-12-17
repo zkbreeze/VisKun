@@ -48,7 +48,7 @@ int main( int argc, char** argv )
         for ( size_t j = 0; j < height; j++ )
             for ( size_t i = 0; i < width; i++ )
             {
-                int index = ( i + j * width + k * width * depth ) * 4;
+                int index = ( i + j * width + k * width * height ) * 4;
                 tfunc3d[index] = (float)i / width; // red
                 tfunc3d[index + 1] = (float)j / height; // green
                 tfunc3d[index + 2] = 1;              // blue

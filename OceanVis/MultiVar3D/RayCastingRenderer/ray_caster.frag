@@ -209,7 +209,7 @@ void main( void )
         vec4 value3 = texture3D( volume3, volume_index );
         float scalar1 = mix( volume.min_range, volume.max_range, value1.w );
         float scalar2 = mix( volume.min_range, volume.max_range, value2.w );
-        float scalar3 = mix( volume.min_range, volume.max_range, value2.w );
+        float scalar3 = mix( volume.min_range, volume.max_range, value3.w );
 
         // Get the source color from the transfer function.
 //        float tfunc_index = ( scalar - volume.min_value ) * tfunc_scale;
