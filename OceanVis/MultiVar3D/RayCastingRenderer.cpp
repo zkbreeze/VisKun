@@ -398,7 +398,8 @@ void RayCastingRenderer::create_image(
         m_ray_caster.bind();
         glActiveTexture( GL_TEXTURE4 ); m_3d_transfer_function_texture.bind(); glEnable( GL_TEXTURE_3D );
         glActiveTexture( GL_TEXTURE5 ); m_jittering_texture.bind(); glEnable( GL_TEXTURE_2D );
-        glActiveTexture( GL_TEXTURE6 ); m_depth_texture.bind();         glActiveTexture( GL_TEXTURE7 ); m_color_texture.bind();
+        glActiveTexture( GL_TEXTURE6 ); m_depth_texture.bind();         
+        glActiveTexture( GL_TEXTURE7 ); m_color_texture.bind();
         glActiveTexture( GL_TEXTURE3 ); m_entry_points.bind();
         glActiveTexture( GL_TEXTURE2 ); m_exit_points.bind();
         glActiveTexture( GL_TEXTURE1 ); m_volume_data.bind();
@@ -778,8 +779,8 @@ void RayCastingRenderer::create_3d_transfer_function( void )
     m_3d_transfer_function_texture.setMagFilter( GL_LINEAR );
     m_3d_transfer_function_texture.setMinFilter( GL_LINEAR );
     m_3d_transfer_function_texture.setPixelFormat( GL_RGBA32F_ARB, GL_RGBA, GL_FLOAT );
-    m_3d_transfer_function_texture.create( m_3d_width, m_3d_height, m_3d_height );
-    m_3d_transfer_function_texture.download( m_3d_width, m_3d_height, m_3d_height, m_3d_tfunc_data );
+    m_3d_transfer_function_texture.create( m_3d_width, m_3d_height, m_3d_depth );
+    m_3d_transfer_function_texture.download( m_3d_width, m_3d_height, m_3d_depth, m_3d_tfunc_data );
     
     ::CheckOpenGLError( "Cannot create 3d transfer function texture." );
 }

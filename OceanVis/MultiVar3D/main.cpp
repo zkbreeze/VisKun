@@ -22,8 +22,11 @@ int main( int argc, char** argv )
     kvs::StructuredVolumeObject* volume_s = new kvs::StructuredVolumeImporter( "../Data/20110515fine/s.kvsml" );
     kvs::StructuredVolumeObject* volume_t = new kvs::StructuredVolumeImporter( "../Data/20110515fine/t.kvsml" );
     kvs::StructuredVolumeObject* volume_v = new kvs::StructuredVolumeImporter( "../Data/20110515fine/velocity.kvsml");
-//    kvs::StructuredVolumeObject* volume_s = new kvs::HydrogenVolumeData( kvs::Vector3ui( 128 ));
-//    kvs::StructuredVolumeObject* volume_t = new kvs::HydrogenVolumeData( kvs::Vector3ui( 128 ));
+    
+//    size_t res = 16;
+//    kvs::StructuredVolumeObject* volume_s = new kvs::HydrogenVolumeData( kvs::Vector3ui( res ));
+//    kvs::StructuredVolumeObject* volume_t = new kvs::HydrogenVolumeData( kvs::Vector3ui( res ));
+//    kvs::StructuredVolumeObject* volume_v = new kvs::HydrogenVolumeData( kvs::Vector3ui( res ));
 //    
 //    unsigned char* ori_values = (unsigned char*)volume_s->values().pointer();
 //    
@@ -36,13 +39,16 @@ int main( int argc, char** argv )
 //    
 //    volume_s->setValues( values );
 //    volume_t->setValues( values );
+//    volume_v->setValues( values );
 //    volume_s->updateMinMaxValues();
 //    volume_t->updateMinMaxValues();
+//    volume_v->updateMinMaxValues();
     
     // set the 2d transfer function
-    size_t width = 64;
-    size_t height = 64;
-    size_t depth = 64;
+    size_t size = 64;
+    size_t width = size;
+    size_t height = size;
+    size_t depth = size;
     float* tfunc3d = new float[width * height * depth * 4];
     for ( size_t k = 0; k < depth; k++ )
         for ( size_t j = 0; j < height; j++ )
