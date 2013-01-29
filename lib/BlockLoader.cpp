@@ -3,7 +3,7 @@
 namespace kun
 {
 
-    BlockLoader::BlockLoader( std::string filename )
+BlockLoader::BlockLoader( std::string filename )
 {
     FILE *rawfile = fopen( filename.c_str(), "rb" );
 	fseek( rawfile, 0, SEEK_END );

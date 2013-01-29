@@ -29,13 +29,7 @@
 #include <kvs/glew/ProgramObject>
 #include <kvs/glew/ShaderSource>
 #include <kvs/glew/FrameBufferObject>
-
-
-namespace kvs
-{
-
-namespace glew
-{
+#include "TransferFunction3D.h"
 
 namespace kun
 {
@@ -121,7 +115,7 @@ public:
 
     void setTransferFunction( const kvs::TransferFunction& tfunc );
     
-    void set3DTransferFunction( float* tfunc3d, size_t resolution_x, size_t resolution_y, size_t resolution_z );
+    void set3DTransferFunction( kun::TransferFunction3D tfunc3d );
 
     void enableJittering( void );
 
@@ -157,7 +151,7 @@ protected:
     
     void create_3d_transfer_function( void );
 
-    void create_volume_data( const kvs::StructuredVolumeObject* volume, kvs::glew::Texture3D volume_data );
+    void create_volume_data( const kvs::StructuredVolumeObject* volume, kvs::glew::Texture3D& volume_data );
     
     void draw_bounding_cube( void );
 
@@ -165,9 +159,5 @@ protected:
 };
 
 } // end of namespace kun
-
-} // end of namespace glew
-
-} // end of namespace kvs
 
 #endif // KVS__GLEW__RAY_CASTING_RENDERER_H_INCLUDE

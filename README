@@ -1,1 +1,5 @@
-This is the first file of my repository
+To use this library, please insert the following include path to the Makefile template after compiling the lib:
+
+INCLUDE_PATH := -I/Users/breeze/Work/VisKun/lib
+LIBRARY_PATH := -L/Users/breeze/Work/VisKun/lib
+LINK_LIBRARY := -lkun

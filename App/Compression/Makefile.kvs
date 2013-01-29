@@ -16,9 +16,9 @@ endif
 SOURCES :=
 OBJECTS :=
 
-INCLUDE_PATH :=
-LIBRARY_PATH :=
-LINK_LIBRARY :=
+INCLUDE_PATH := -I ~/Work/VisKun/lib
+LIBRARY_PATH := -L ~/Work/VisKun/lib
+LINK_LIBRARY := -l kun
 INSTALL_DIR  :=
 
 

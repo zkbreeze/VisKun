@@ -32,6 +32,7 @@ public:
 public:
 
     kvs::ObjectBase* exec( const kvs::ObjectBase* object );
+    
 };
 
 } // end of namespace kvs

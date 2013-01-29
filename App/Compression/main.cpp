@@ -22,8 +22,12 @@
 #include <kvs/ExtractVertices>
 #include <kvs/CommandLine>
 #include <kvs/Timer>
+#include <kvs/HydrogenVolumeData>
 #include "CubeToTetrahedraBspline.h"
 #include "CubeToTetrahedraLinear.h"
+#include "VldImporter.h"
+#include "JetImporter.h"
+#include "WriteStructuredVolume.h"
 
 using namespace std;
 
@@ -43,7 +47,10 @@ public:
     Argument( int argc, char** argv ) : CommandLine ( argc, argv )
     {
         add_help_option();
-        addOption( "f", "filename", 1, true );
+        addOption( "f", "filename", 1, false );
+        addOption( "H", "use the hydrogen volume", 0, false );
+        addOption( "vld", "use vld volume", 1, false );
+        addOption( "jet", "ues jet volume", 1, false );
         addOption( "b", "block size", 1, false );
         addOption( "sp", "subpixel level", 1 , false );
         addOption( "ss", "sampling step", 1, false );
@@ -69,6 +76,8 @@ public:
         
         if( !this->parse() ) exit( EXIT_FAILURE );
         if( this->hasOption( "f" ) ) filename = this->optionValue<std::string>( "f" );
+        if( this->hasOption( "vld" ) ) filename = this->optionValue<std::string>( "vld" );
+        if( this->hasOption( "jet" ) ) filename = this->optionValue<std::string>( "jet" );
         if( this->hasOption( "b" ) ) block_size = this->optionValue<size_t>( "b" );
         if( this->hasOption( "sp" ) ) sp = this->optionValue<size_t>( "sp" );
         if( this->hasOption( "ss" ) ) samplingstep = this->optionValue<float>( "ss" );
@@ -118,9 +127,41 @@ int main( int argc, char** argv )
     kvs::TransferFunction transferfunc = param.tfunc;
     
     // load the original volume data
-    kvs::StructuredVolumeObject* volume = new kvs::StructuredVolumeImporter( param.filename );
+    kvs::StructuredVolumeObject* volume = NULL;
+    if ( param.hasOption( "H" ) )
+    {
+        kvs::StructuredVolumeObject* object = new kvs::HydrogenVolumeData( kvs::Vector3ui( 128 ) );
+        //convert to float type
+        unsigned char* buf = (unsigned char*)object->values().pointer();
+        unsigned int length = object->nnodes();
+        kvs::AnyValueArray values;
+        float* pvalues = static_cast<float*>( values.allocate<float>( length ) );
+        for( size_t i = 0; i < length; i++ ) pvalues[i] = (float)buf[i];
+        
+        volume  =  new kvs::StructuredVolumeObject(
+                                                   object->resolution(),
+                                                   1,
+                                                   values
+                                                   );
+        std::cout << "Use the hydrogen volume data" << std::endl;
+        WriteStructuredVolume( volume, "hydrogen128.kvsml" );
+        // delete object;
+    }
+    else if ( param.hasOption( "vld" ) )
+    {
+        volume = new kun::VldImporter( param.filename );
+        
+    }
+    else if ( param.hasOption( "jet" ) )
+    {
+        volume = new kun::JetImporter( param.filename );
+    }
+    else
+    {
+        volume = new kvs::StructuredVolumeImporter( param.filename );
+    }
+    
     transferfunc.setRange( volume->minValue(), volume->maxValue() );
-
     std::string volumeName = param.outFilename;
         
     size_t nx = volume->resolution().x();
@@ -138,17 +179,19 @@ int main( int argc, char** argv )
             time.start();
             tet = new kun::CubeToTetrahedraBspline( volume, param.block_size );
             time.stop();
-            std::cout << "min value of the compressed volume:" << tet->minValue() << std::endl;
-            std::cout << "max value of the compressed volume:" << tet->maxValue() << std::endl;
-            std::cout << "start processing the value" << std::endl;
-            float* pvalues = (float*)tet->values().pointer();
-            float min = volume->minValue();
-            float max = volume->maxValue();
-            for ( size_t i = 0; i < tet->nnodes(); i++ )
-            {
-                if( pvalues[i] > max ) pvalues[i] = max;
-                if( pvalues[i] < min ) pvalues[i] = min;
-            }
+//            std::cout << "min value of the compressed volume:" << tet->minValue() << std::endl;
+//            std::cout << "max value of the compressed volume:" << tet->maxValue() << std::endl;
+//            std::cout << "start processing the value" << std::endl;
+//            float* pvalues = (float*)tet->values().pointer();
+//            float min = volume->minValue();
+//            float max = volume->maxValue();
+//            for ( size_t i = 0; i < tet->nnodes(); i++ )
+//            {
+//                if( pvalues[i] > max ) pvalues[i] = max;
+//                if( pvalues[i] < min ) pvalues[i] = min;
+//            }
+//            
+//            tet->updateMinMaxValues();
             
             std::cout << "Processing time: " << time.msec() << "msec" << std::endl;
         }
@@ -171,7 +214,7 @@ int main( int argc, char** argv )
             char block_char[256];
             sprintf( block_char, "%ld", param.block_size );
             std::string num = std::string( block_char ); 
-            std::string output_filename = volumeName + "BsplineBlock_" + num + ".kvsml";
+            std::string output_filename = volumeName + "BsplineBlock_" + num + "_000.kvsml";
             output_volume->write( output_filename.c_str() );
             std::cout << "finish writing" << std::endl;
         }
@@ -190,7 +233,7 @@ int main( int argc, char** argv )
             char block_char[256];
             sprintf( block_char, "%ld", param.block_size );
             std::string num = std::string( block_char ); 
-            std::string outputName = volumeName + "Bspline_" + num + ".zk";
+            std::string outputName = volumeName + "Linear_" + num + ".zk";
             FILE* outputFile = fopen( outputName.c_str(), "wb" );
             fwrite( buf, sizeof(float), length, outputFile );
             std::cout << "finish writting zk file" << std::endl;
@@ -218,8 +261,10 @@ int main( int argc, char** argv )
             std::cout << *object << std::endl;
             
             if( param.hasOption( "outpoint" ) )
+            {
                 WriteKVSMLPoint( object, param.outPoint );
-            std::cout << "Finish writting the point object" << std::endl;
+                std::cout << "Finish writting the point object" << std::endl;
+            }
             
         }
         if( param.hasOption( "Edge" ) )
@@ -256,7 +301,7 @@ int main( int argc, char** argv )
     
     screen.background()->setColor( kvs::RGBColor( 255, 255, 255 ));
 //    screen.camera()->scale( kvs::Vector3f( 0.5 ) );
-    screen.setGeometry( 0, 0, 1024, 768 );
+//    screen.setGeometry( 0, 0, 1024, 768 );
     screen.show();
     
     return( app.run() );

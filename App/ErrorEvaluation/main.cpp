@@ -8,9 +8,31 @@
 #include <kvs/glew/RayCastingRenderer>
 #include <kvs/glut/Screen>
 #include <kvs/glut/Application>
+#include <kvs/CommandLine>
+#include <kvs/File>
 #include "BlockLoader.h"
+#include "VldImporter.h"
 
-double valid_opacity = 30.0/256.0;
+class Argument : public kvs::CommandLine
+{
+public:
+    std::string filename_ori;
+    std::string filename_eva;
+    
+    Argument( int argc, char** argv ) : CommandLine( argc, argv )
+    {
+        add_help_option();
+        addOption( "ori", "input the filename of the original volume", 1, true );
+        addOption( "eva", "input the filename of the evaluation volume", 1, true );
+    }
+    
+    void exec()
+    {
+        if( !this->parse() ) exit( EXIT_FAILURE );
+        filename_ori = this->optionValue<std::string>( "ori" );
+        filename_eva = this->optionValue<std::string>( "eva" );
+    }
+};
 
 void CalcBoundingBox( kvs::TetrahedralCell<float>* cell, kvs::Vector3f& min_c, kvs::Vector3f& max_c )
 {
@@ -34,13 +56,41 @@ void CalcBoundingBox( kvs::TetrahedralCell<float>* cell, kvs::Vector3f& min_c, k
 
 int main( int argc, char** argv )
 {
-    //kvs::glut::Application app( argc, argv );
-    kvs::StructuredVolumeObject* ori_volume = new kvs::StructuredVolumeImporter( argv[1] );
+    Argument param( argc, argv );
+    param.exec();
+    
+    kvs::File fileOri( param.filename_ori );
+    kvs::File fileEva( param.filename_eva );
+    
+    kvs::StructuredVolumeObject* ori_volume = NULL;
+    kvs::UnstructuredVolumeObject* eva_volume = NULL;
+    
+    if( fileOri.extension() == "kvsml" )
+    {
+        ori_volume = new kvs::StructuredVolumeImporter( param.filename_ori );
+        std::cout << "use kvsml volume data as original data" << std::endl;
+    }
+    else if( fileOri.extension() == "vld" )
+    {
+        ori_volume = new kun::VldImporter( param.filename_ori );
+        std::cout << "use vld volume data as original data" << std::endl;
+    }
+    
     size_t nx = ori_volume->resolution().x();
     size_t ny = ori_volume->resolution().y();
     size_t nz = ori_volume->resolution().z();
     
-    kvs::UnstructuredVolumeObject* eva_volume = new kun::BlockLoader( argv[2] );
+    if( fileEva.extension() == "kvsml")
+    {
+        eva_volume = new kvs::UnstructuredVolumeImporter( param.filename_eva );
+        std::cout << "use kvsml volume data as evaluation data" << std::endl;
+    }
+    else if( fileEva.extension() == "zk" )
+    {    
+        eva_volume = new kun::BlockLoader( param.filename_eva );
+        std::cout << "use zk volume data as evaluation data" << std::endl;
+    }
+    
     float max_value = (float)ori_volume->maxValue();
     float min_value = (float)ori_volume->minValue();
     std::cout << "max valume of the compressed volume:" << max_value << std::endl;
@@ -87,49 +137,15 @@ int main( int argc, char** argv )
                 }
     }
     
-//    //check the interpolation division volume
-//    kvs::glut::Screen screen( &app );
-//    kvs::Vector3ui resolution( nx, ny, nz );
-//    kvs::AnyValueArray interpolation_values( eva_values );
-//    kvs::StructuredVolumeObject* interpolation_volume = new kvs::StructuredVolumeObject(
-//                                                                                        resolution,
-//                                                                                        1,
-//                                                                                        interpolation_values
-//                                                                                        );
-//    interpolation_volume->updateMinMaxCoords();
-//    interpolation_volume->updateMinMaxValues();
-//
-//    kvs::glew::RayCastingRenderer* renderer = new kvs::glew::RayCastingRenderer();
-//    screen.registerObject( interpolation_volume, renderer );
-//    screen.show();    
-//    return( app.run());
-    
     //Calculate the error
     float error = 0;
-    float error_e = 0; //efficient error
-    float average_error = 0;
-    float average_error_e = 0;
-    size_t count_e = 0;
-    
-    double valid_value = min_value + ( ( max_value - min_value) * valid_opacity );
-    std::cout << "valid value: " << valid_value << std::endl;
+    float average_error = 0;    
     for ( unsigned int i = 0; i < nx * ny * nz; i ++ )
     {
-        // efficient error, not needed for the ocean data
-        if(ori_values[i] >= valid_value)
-        {
-            error_e += fabs(eva_values[i] - ori_values[i]) / ( max_value - min_value ) ;
-            count_e ++;
-        }    
-        error += fabs( (eva_values[i] - ori_values[i]) / max_value ) ;
+        error += fabs(eva_values[i] - ori_values[i]) / ( max_value - min_value ) ;
     }
-//    average_error = error/(nx * ny * nz);
-    average_error_e = error_e / count_e;
     average_error = error / ( nx * ny * nz );
     
     std::cout << "whole error: " << error << std::endl;
-    std::cout << "whole error_e: " << error_e << std::endl;
     std::cout << "The average error is: " << average_error << std::endl;
-    std::cout << "The average error_e is:" << average_error_e << std::endl;
-    std::cout << "RMSE: " << std::sqrt( average_error ) << std::endl;
 }

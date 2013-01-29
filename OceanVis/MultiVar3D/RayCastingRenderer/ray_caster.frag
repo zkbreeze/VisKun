@@ -121,7 +121,7 @@ uniform float            to_ze2;            // scaling parameter: (f-n)/(f*n)
 
 uniform sampler3D        volume2;           // for the second volume;
 uniform sampler3D        volume3;           // for the third volume;
-uniform sampler3D        transfer_function3d;// 2d tansfer function
+uniform sampler3D        transfer_function3d;// 3d tansfer function
 uniform float            tfunc_width;
 uniform float            tfunc_height;
 uniform float            tfunc_depth;

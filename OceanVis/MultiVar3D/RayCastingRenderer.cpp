@@ -83,13 +83,6 @@ kvs::AnyValueArray SignedToUnsigned( const kvs::StructuredVolumeObject* volume )
 
 } // end of namespace
 
-
-namespace kvs
-{
-
-namespace glew
-{
-
 namespace kun
 {
 
@@ -235,13 +228,13 @@ void RayCastingRenderer::setDrawingBuffer( const RayCastingRenderer::DrawingBuff
  */
 /*===========================================================================*/
     
-// set 2d transfer function
-void RayCastingRenderer::set3DTransferFunction( float* tfunc3d, size_t resolution_x, size_t resolution_y, size_t resolution_z )
+// set 3d transfer function
+    void RayCastingRenderer::set3DTransferFunction( kun::TransferFunction3D tfunc3d )
 {
-    m_3d_tfunc_data = tfunc3d;
-    m_3d_width = resolution_x;
-    m_3d_height = resolution_y;
-    m_3d_depth = resolution_z;
+    m_3d_tfunc_data = tfunc3d.values();
+    m_3d_width = tfunc3d.resolution().x();
+    m_3d_height = tfunc3d.resolution().y();
+    m_3d_depth = tfunc3d.resolution().z();
 }    
   
 // add another volume    
@@ -290,10 +283,14 @@ void RayCastingRenderer::create_image(
         this->create_bounding_cube( volume );
         // Download the 2d transfer function data to the 2D texture on the GPU.
         this->create_3d_transfer_function( );
+        std::cout << "3d transfer function: " << m_3d_transfer_function_texture.isDownloaded() << std::endl;
         // Download the volume data to the 3D texture on the GPU.
         this->create_volume_data( volume, m_volume_data );
         this->create_volume_data( m_volume_2, m_volume_data_2 );
         this->create_volume_data( m_volume_3, m_volume_data_3 );
+        std::cout << "texture 1: " << m_volume_data.isDownloaded() << std::endl;
+        std::cout << "texture 2: " << m_volume_data_2.isDownloaded() << std::endl;
+        std::cout << "texture 3: " << m_volume_data_3.isDownloaded() << std::endl;
 
         m_entry_exit_framebuffer.create();
 
@@ -394,17 +391,34 @@ void RayCastingRenderer::create_image(
 //        glGetIntegerv( GL_MAX_TEXTURE_IMAGE_UNITS, &temp );
 //        std::cout<< temp << std::endl;
         
+//        KVS_GL_CALL( glEnable() );
+//    
+//#define KVS_GL_CALL 
+//        
+//        glEnable();
+//        ::CheckOpenGLError( "glEnable", 404 );
+        
         // Ray casting.
         m_ray_caster.bind();
         glActiveTexture( GL_TEXTURE4 ); m_3d_transfer_function_texture.bind(); glEnable( GL_TEXTURE_3D );
+        ::CheckOpenGLError( "1 data texture." );
+
         glActiveTexture( GL_TEXTURE5 ); m_jittering_texture.bind(); glEnable( GL_TEXTURE_2D );
+        ::CheckOpenGLError( "2 data texture." );
+
         glActiveTexture( GL_TEXTURE6 ); m_depth_texture.bind();         
+        ::CheckOpenGLError( "3 data texture." );
+
         glActiveTexture( GL_TEXTURE7 ); m_color_texture.bind();
+        ::CheckOpenGLError( "4 data texture." );
+
         glActiveTexture( GL_TEXTURE3 ); m_entry_points.bind();
         glActiveTexture( GL_TEXTURE2 ); m_exit_points.bind();
         glActiveTexture( GL_TEXTURE1 ); m_volume_data.bind();
         glActiveTexture( GL_TEXTURE8 ); m_volume_data_2.bind();
         glActiveTexture( GL_TEXTURE9 ); m_volume_data_3.bind();
+        ::CheckOpenGLError( "5 data texture." );
+
 
         {
             const float f = camera->back();
@@ -434,6 +448,8 @@ void RayCastingRenderer::create_image(
             this->draw_quad( 1.0f );
         }
         glActiveTexture( GL_TEXTURE4 ); m_3d_transfer_function_texture.unbind();
+        ::CheckOpenGLError( "7 data texture." );
+
         glActiveTexture( GL_TEXTURE3 ); m_entry_points.unbind(); 
         glActiveTexture( GL_TEXTURE2 ); m_exit_points.unbind();
         glActiveTexture( GL_TEXTURE5 ); m_jittering_texture.unbind();
@@ -441,11 +457,13 @@ void RayCastingRenderer::create_image(
         glActiveTexture( GL_TEXTURE7 ); m_color_texture.unbind(); glDisable( GL_TEXTURE_2D );
         glActiveTexture( GL_TEXTURE1 ); m_volume_data.unbind();
         glActiveTexture( GL_TEXTURE8 ); m_volume_data_2.unbind();
-        glActiveTexture( GL_TEXTURE9 ); m_volume_data_3.unbind(); glDisable( GL_TEXTURE_3D );
+        glActiveTexture( GL_TEXTURE9 ); m_volume_data_3.unbind();
+
         m_ray_caster.unbind();
     }
 
     glActiveTexture( GL_TEXTURE0 );
+    ::CheckOpenGLError( "7 data texture." );
 
     glPopAttrib();
     glFinish();
@@ -791,7 +809,7 @@ void RayCastingRenderer::create_3d_transfer_function( void )
  *  @param  volume [in] pointer to the structured volume object
  */
 /*===========================================================================*/
-void RayCastingRenderer::create_volume_data( const kvs::StructuredVolumeObject* volume, kvs::glew::Texture3D volume_data )
+void RayCastingRenderer::create_volume_data( const kvs::StructuredVolumeObject* volume, kvs::glew::Texture3D& volume_data )
 {
     const size_t width = volume->resolution().x();
     const size_t height = volume->resolution().y();
@@ -934,7 +952,3 @@ void RayCastingRenderer::draw_quad( const float opacity )
 }
 
 } // end of namespace kun
-
-} // end of namespace glew
-
-} // end of namespace kvs
